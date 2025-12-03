@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../widgets/custom_text_field.dart';
+import '../api_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -43,7 +44,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return null;
   }
 
-  void _handleSignUp() {
+  void _handleSignUp() async {
     final passwordError = _validatePassword(_passwordController.text);
     if (passwordError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,13 +56,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    // TODO: Implement actual Firebase/API Sign Up Logic
-    debugPrint('Sign Up: ${_firstNameController.text} ${_lastNameController.text}');
-    debugPrint('Email: ${_emailController.text}');
+    try {
+      final result = await ApiService.signUp(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
-    // For now, we just print success.
-    // Once HomeScreen is created, you would navigate there:
-    // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+      debugPrint('Sign Up Successful: $result');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Account created successfully! Please log in.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Navigate back to login screen
+      Navigator.of(context).pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+      );
+    }
   }
 
   @override
@@ -140,10 +158,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 obscureText: !_isPasswordVisible,
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    _isPasswordVisible
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
                     color: AppColors.textLight,
                   ),
-                  onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                  onPressed: () =>
+                      setState(() => _isPasswordVisible = !_isPasswordVisible),
                 ),
               ),
               const SizedBox(height: 16),
@@ -154,10 +175,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 obscureText: !_isConfirmPasswordVisible,
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isConfirmPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    _isConfirmPasswordVisible
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
                     color: AppColors.textLight,
                   ),
-                  onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                  onPressed: () => setState(
+                    () =>
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
+                  ),
                 ),
               ),
 
@@ -170,7 +196,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 2,
                 ),
                 child: const Text(
@@ -185,12 +213,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Already have an account? ", style: TextStyle(color: AppColors.textLight)),
+                  const Text(
+                    "Already have an account? ",
+                    style: TextStyle(color: AppColors.textLight),
+                  ),
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pop(), // Go back to Login
+                    onTap: () =>
+                        Navigator.of(context).pop(), // Go back to Login
                     child: const Text(
                       'Log In',
-                      style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

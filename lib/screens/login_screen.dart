@@ -3,6 +3,7 @@ import '../constants.dart';
 import '../widgets/custom_text_field.dart';
 import 'home_screen.dart';
 import 'signup_screen.dart'; // 1. Import the Signup Screen
+import '../api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,25 +24,23 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  void _handleLogin() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    // Check for specific admin credentials
-    if (email == 'admin' && password == 'admin') {
-      debugPrint('Login Successful');
+    try {
+      final result = await ApiService.login(email, password);
+      final token = result['access_token'];
 
-      // Navigate to HomeScreen and remove LoginScreen from back stack
+      debugPrint('Login successful. Token: $token');
+
+      // Navigate to HomeScreen
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
-    } else {
-      // Show error message
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid credentials. Try admin/admin'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
       );
     }
   }
@@ -79,10 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const Text(
                 'Sign in to continue',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.textLight,
-                ),
+                style: TextStyle(fontSize: 16, color: AppColors.textLight),
               ),
               const SizedBox(height: 48),
 
@@ -166,7 +162,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const SignUpScreen()),
+                          builder: (context) => const SignUpScreen(),
+                        ),
                       );
                     },
                     child: const Text(
