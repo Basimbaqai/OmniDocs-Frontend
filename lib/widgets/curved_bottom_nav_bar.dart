@@ -15,19 +15,21 @@ class CurvedBottomNavBar extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final itemCount = 3;
     final itemWidth = screenWidth / itemCount;
-
-    final bottomPadding = MediaQuery.of(context).padding.bottom; // Safe area
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final navBarHeight =
+        MediaQuery.of(context).size.height * 0.11; // 8% of screen height
+    final indicatorHeight = navBarHeight * 0.08; // 8% of nav bar height
 
     return Container(
-      height: 70 + bottomPadding, // Adjust height with safe area
+      height: navBarHeight + bottomPadding,
       padding: EdgeInsets.only(bottom: bottomPadding),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
+            blurRadius: navBarHeight * 0.3,
+            offset: Offset(0, -navBarHeight * 0.07),
           ),
         ],
       ),
@@ -41,12 +43,12 @@ class CurvedBottomNavBar extends StatelessWidget {
             bottom: 0,
             child: Container(
               width: itemWidth,
-              height: 4,
+              height: indicatorHeight,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 5, 70, 114),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(indicatorHeight * 2.5),
+                  topRight: Radius.circular(indicatorHeight * 2.5),
                 ),
               ),
             ),
@@ -61,6 +63,7 @@ class CurvedBottomNavBar extends StatelessWidget {
                 label: 'Profile',
                 index: 0,
                 width: itemWidth,
+                navBarHeight: navBarHeight,
               ),
               _buildNavItem(
                 icon: Icons.qr_code_2_outlined,
@@ -68,6 +71,7 @@ class CurvedBottomNavBar extends StatelessWidget {
                 label: 'My QR',
                 index: 1,
                 width: itemWidth,
+                navBarHeight: navBarHeight,
               ),
               _buildNavItem(
                 icon: Icons.qr_code_scanner_outlined,
@@ -75,6 +79,7 @@ class CurvedBottomNavBar extends StatelessWidget {
                 label: 'Scan QR',
                 index: 2,
                 width: itemWidth,
+                navBarHeight: navBarHeight,
               ),
             ],
           ),
@@ -89,8 +94,13 @@ class CurvedBottomNavBar extends StatelessWidget {
     required String label,
     required int index,
     required double width,
+    required double navBarHeight,
   }) {
     final isSelected = selectedIndex == index;
+    final iconSize = navBarHeight * 0.3;
+    final labelFontSize = navBarHeight * 0.2;
+    final padding = navBarHeight * 0.08;
+    final borderRadius = navBarHeight * 0.12;
 
     return SizedBox(
       width: width,
@@ -98,32 +108,34 @@ class CurvedBottomNavBar extends StatelessWidget {
         onTap: () => onItemTapped(index),
         behavior: HitTestBehavior.opaque,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              padding: EdgeInsets.all(isSelected ? 8 : 4),
+              padding: EdgeInsets.all(
+                isSelected ? padding * 1.2 : padding * 0.6,
+              ),
               decoration: BoxDecoration(
                 color: isSelected
                     ? const Color.fromARGB(255, 5, 70, 114).withOpacity(0.1)
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: Icon(
                 isSelected ? selectedIcon : icon,
-                size: isSelected ? 28 : 26,
+                size: iconSize,
                 color: isSelected
                     ? const Color.fromARGB(255, 5, 70, 114)
                     : Colors.grey[600],
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: navBarHeight * 0.06),
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 300),
               style: TextStyle(
-                fontSize: isSelected ? 13 : 12,
+                fontSize: labelFontSize,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
                     ? const Color.fromARGB(255, 5, 70, 114)
