@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:omnidocs_frontend/widgets/curved_bottom_nav_bar.dart';
+import '../widgets/curved_bottom_nav_bar.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  @override  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -21,7 +21,49 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: _screens[_selectedIndex],
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // 1. Invisible placeholder to balance the row
+                  const SizedBox(width: 48),
+
+                  // 2. Centered Text
+                  const Text(
+                    'Welcome, Admin!',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+
+                  // 3. Logout Button on the right
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    tooltip: 'Logout',
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
+                            (Route<dynamic> route) => false,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: _screens[_selectedIndex],
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: SafeArea(
         top: false,
         child: CurvedBottomNavBar(

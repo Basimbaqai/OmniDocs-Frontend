@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'screens/login_screen.dart'; // Corrected import
 
 void main() {
-  runApp(const MyApp());
+  runApp(const OmniDocs());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class OmniDocs extends StatelessWidget {
+  const OmniDocs({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primaryColor: const Color.fromARGB(255, 5, 70, 114),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }
