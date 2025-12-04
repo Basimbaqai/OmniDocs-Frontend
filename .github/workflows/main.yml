@@ -20,7 +20,7 @@ jobs:
 
       - name: Install Shorebird
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://get.shorebird.dev | bash
+          curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
           echo "$HOME/.shorebird/bin" >> $GITHUB_PATH
           shorebird --version
 
