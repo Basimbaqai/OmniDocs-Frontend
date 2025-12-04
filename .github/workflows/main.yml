@@ -29,9 +29,8 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Note: all signing information (key.properties, etc.) must be set up on
-      # this runner for `shorebird patch android` to work.
       - name: 🚀 Shorebird Patch
         uses: shorebirdtech/shorebird-patch@v1
         with:
-          platform: android # or 'ios'
+          platform: android
+          release-version: latest
