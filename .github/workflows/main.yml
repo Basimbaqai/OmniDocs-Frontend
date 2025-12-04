@@ -1,33 +1,37 @@
-name: Shorebird Patch Android
+name: Shorebird Patch
 
 on:
-  push:
-    branches:
-      - main    # or whichever branch you want to trigger patch
+  workflow_dispatch:
 
 env:
   SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
 
 jobs:
-  patch_android:
-    runs-on: ubuntu-latest
+  patch:
     defaults:
       run:
         shell: bash
 
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: 📚 Git Checkout
         uses: actions/checkout@v3
 
       - name: 🐦 Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
         with:
-          cache: true   # optional but speeds up CI
+          cache: true
 
-      - name: Authenticate Shorebird (CI)
-        run: |
-          shorebird login:ci "${SHOREBIRD_TOKEN}"
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Run Shorebird Patch (Android)
-        run: |
-          shorebird patch android
+      # Note: all signing information (key.properties, etc.) must be set up on
+      # this runner for `shorebird patch android` to work.
+      - name: 🚀 Shorebird Patch
+        uses: shorebirdtech/shorebird-patch@v1
+        with:
+          platform: android # or 'ios'
