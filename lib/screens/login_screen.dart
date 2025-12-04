@@ -110,22 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              // 4. Forgot Password Button
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    debugPrint('Navigate to Forgot Password');
-                  },
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: 24),
 
               // 5. Login Button
