@@ -173,4 +173,19 @@ class ApiService {
       throw Exception('Document not found');
     }
   }
+
+  // ---------------- GET QR CODE ----------------
+  static Future<Map<String, dynamic>> getQrCode(
+    String token,
+    int documentId,
+  ) async {
+    final url = Uri.parse('$baseUrl/documents/qr-code/$documentId');
+    final response = await http.get(url, headers: _headers(token));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load QR code');
+    }
+  }
 }
