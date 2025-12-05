@@ -4,7 +4,6 @@ import '../constants.dart';
 import '../widgets/curved_bottom_nav_bar.dart';
 import '../widgets/top_bar.dart';
 import 'documents_and_qr_screen.dart';
-import 'login_screen.dart';
 import 'profile_screen.dart';
 import 'scan_qr_screen.dart';
 

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../api_service.dart';
 import 'document_details_screen.dart';
 
 class ScanQrScreen extends StatefulWidget {

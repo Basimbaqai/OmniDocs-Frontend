@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
 
 class UserInfoDisplay extends StatelessWidget {
   final Map<String, dynamic> userData;
