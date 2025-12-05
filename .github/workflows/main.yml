@@ -30,9 +30,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-
+      
       - name: 🚀 Shorebird Patch
         uses: shorebirdtech/shorebird-patch@v1
         with:
           platform: android
           release-version: latest
+          flutter-version: 3.24.3
+
