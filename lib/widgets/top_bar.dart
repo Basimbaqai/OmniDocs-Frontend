@@ -3,32 +3,27 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class TopBar extends StatelessWidget {
-  final VoidCallback onLogout;
-  final String title;
+  final int currentIndex;
 
-  const TopBar({super.key, required this.onLogout, required this.title});
+  const TopBar({super.key, required this.currentIndex});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    List<String> titles = ['Profile', 'QR Codes', 'Scan QR'];
+
+    return Container(
+      color: AppColors.primary,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(width: 48),
           Text(
-            title,
+            titles[currentIndex],
             style: const TextStyle(
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
+              color: AppColors.secondary,
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            color: Theme.of(context).primaryColor,
-            onPressed: onLogout,
           ),
         ],
       ),

@@ -42,15 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            TopBar(
-              title: 'Welcome, Admin!',
-              onLogout: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-            ),
+            TopBar(currentIndex: _selectedIndex),
             Expanded(child: _screens[_selectedIndex]),
           ],
         ),
