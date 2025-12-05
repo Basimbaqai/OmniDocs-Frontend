@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
-import '../widgets/custom_text_field.dart';
+
 import '../api_service.dart';
+import '../constants.dart';
+import '../validators/email_validator.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/password_field.dart';
+import '../widgets/signup_prompt.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -16,9 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
+  bool _isVerifyingEmail = false;
 
   @override
   void dispose() {
@@ -44,13 +46,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return null;
   }
 
+  // Validate email format and existence
+  Future<String?> _validateEmail(String email) async {
+    // First check format
+    String? formatError = EmailValidator.validateEmailFormatOnly(email);
+    if (formatError != null) {
+      return formatError;
+    }
+
+    // Then verify the email exists
+    try {
+      setState(() => _isVerifyingEmail = true);
+      final exists = await EmailValidator.validateGmailExists(email);
+      setState(() => _isVerifyingEmail = false);
+
+      if (!exists) {
+        return 'This Gmail address does not exist. Please enter a valid Gmail.';
+      }
+      return null;
+    } catch (e) {
+      setState(() => _isVerifyingEmail = false);
+      return e.toString().replaceAll('Exception: ', '');
+    }
+  }
+
   void _handleSignUp() async {
+    // Validate password
     final passwordError = _validatePassword(_passwordController.text);
     if (passwordError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(passwordError),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: AppColors.errorRed,
+        ),
+      );
+      return;
+    }
+
+    // Validate email
+    final emailError = await _validateEmail(_emailController.text.trim());
+    if (emailError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(emailError),
+          backgroundColor: AppColors.errorRed,
         ),
       );
       return;
@@ -69,7 +108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Account created successfully! Please log in.'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.successGreen,
         ),
       );
 
@@ -77,7 +116,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       Navigator.of(context).pop();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: AppColors.errorRed,
+        ),
       );
     }
   }
@@ -101,7 +143,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 1. Header
               const Text(
                 'Create Account',
                 textAlign: TextAlign.center,
@@ -118,8 +159,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 style: TextStyle(fontSize: 16, color: AppColors.textLight),
               ),
               const SizedBox(height: 48),
-
-              // 2. Name Fields
               Row(
                 children: [
                   Expanded(
@@ -140,8 +179,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-
-              // 3. Email Field
               CustomTextField(
                 controller: _emailController,
                 label: 'Email Address',
@@ -149,86 +186,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16),
-
-              // 4. Password Fields
-              CustomTextField(
-                controller: _passwordController,
-                label: 'Password',
-                icon: Icons.lock_outline,
-                obscureText: !_isPasswordVisible,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: AppColors.textLight,
-                  ),
-                  onPressed: () =>
-                      setState(() => _isPasswordVisible = !_isPasswordVisible),
-                ),
-              ),
+              PasswordField(controller: _passwordController, label: 'Password'),
               const SizedBox(height: 16),
-              CustomTextField(
+              PasswordField(
                 controller: _confirmPasswordController,
                 label: 'Confirm Password',
-                icon: Icons.lock_outline,
-                obscureText: !_isConfirmPasswordVisible,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isConfirmPasswordVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: AppColors.textLight,
-                  ),
-                  onPressed: () => setState(
-                    () =>
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible,
-                  ),
-                ),
               ),
-
               const SizedBox(height: 40),
-
-              // 5. Sign Up Button
               ElevatedButton(
-                onPressed: _handleSignUp,
+                onPressed: _isVerifyingEmail ? null : _handleSignUp,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.foreground,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 2,
                 ),
-                child: const Text(
-                  'CREATE ACCOUNT',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // 6. Link back to Login
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Already have an account? ",
-                    style: TextStyle(color: AppColors.textLight),
-                  ),
-                  GestureDetector(
-                    onTap: () =>
-                        Navigator.of(context).pop(), // Go back to Login
-                    child: const Text(
-                      'Log In',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
+                child: _isVerifyingEmail
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.foreground,
+                          ),
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'CREATE ACCOUNT',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ),
-                ],
+              ),
+              const SizedBox(height: 40),
+              SignUpPrompt(
+                promptText: "Already have an account? ",
+                actionText: 'Log In',
+                onTap: () => Navigator.of(context).pop(),
               ),
             ],
           ),

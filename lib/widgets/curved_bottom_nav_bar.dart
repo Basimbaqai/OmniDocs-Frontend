@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 
 class CurvedBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -24,10 +25,10 @@ class CurvedBottomNavBar extends StatelessWidget {
       height: navBarHeight + bottomPadding,
       padding: EdgeInsets.only(bottom: bottomPadding),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.secondary,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: AppColors.textDark.withOpacity(0.1),
             blurRadius: navBarHeight * 0.3,
             offset: Offset(0, -navBarHeight * 0.07),
           ),
@@ -45,7 +46,7 @@ class CurvedBottomNavBar extends StatelessWidget {
               width: itemWidth,
               height: indicatorHeight,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 5, 70, 114),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(indicatorHeight * 2.5),
                   topRight: Radius.circular(indicatorHeight * 2.5),
@@ -119,16 +120,14 @@ class CurvedBottomNavBar extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? const Color.fromARGB(255, 5, 70, 114).withOpacity(0.1)
-                    : Colors.transparent,
+                    ? AppColors.primary.withOpacity(0.1)
+                    : AppColors.transparent,
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: Icon(
                 isSelected ? selectedIcon : icon,
                 size: iconSize,
-                color: isSelected
-                    ? const Color.fromARGB(255, 5, 70, 114)
-                    : Colors.grey[600],
+                color: isSelected ? AppColors.primary : AppColors.textLight,
               ),
             ),
             SizedBox(height: navBarHeight * 0.06),
@@ -137,9 +136,7 @@ class CurvedBottomNavBar extends StatelessWidget {
               style: TextStyle(
                 fontSize: labelFontSize,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected
-                    ? const Color.fromARGB(255, 5, 70, 114)
-                    : Colors.grey[600],
+                color: isSelected ? AppColors.primary : AppColors.textLight,
               ),
               child: Text(label),
             ),

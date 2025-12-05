@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
-import '../widgets/custom_text_field.dart';
-import 'home_screen.dart';
-import 'signup_screen.dart'; // 1. Import the Signup Screen
+
 import '../api_service.dart';
+import '../constants.dart';
+import '../widgets/auth_header.dart';
+import '../widgets/custom_text_field.dart';
+import '../widgets/password_field.dart';
+import '../widgets/signup_prompt.dart';
+import 'home_screen.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,7 +19,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -40,7 +43,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: AppColors.errorRed,
+        ),
       );
     }
   }
@@ -56,33 +62,11 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 1. Logo
-              const Icon(
-                Icons.qr_code_scanner_rounded,
-                size: 80,
-                color: AppColors.primary,
-              ),
-              const SizedBox(height: 24),
-
-              // 2. Header Text
-              const Text(
-                'Welcome',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Sign in to continue',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: AppColors.textLight),
+              const AuthHeader(
+                title: 'Welcome',
+                subtitle: 'Sign in to continue',
               ),
               const SizedBox(height: 48),
-
-              // 3. Form Fields
               CustomTextField(
                 controller: _emailController,
                 label: 'Email Address',
@@ -90,34 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.text,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
-                controller: _passwordController,
-                label: 'Password',
-                icon: Icons.lock_outline,
-                obscureText: !_isPasswordVisible,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: AppColors.textLight,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                ),
-              ),
-
+              PasswordField(controller: _passwordController, label: 'Password'),
               const SizedBox(height: 24),
-
-              // 5. Login Button
               ElevatedButton(
                 onPressed: _handleLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.foreground,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -129,36 +92,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-
               const SizedBox(height: 40),
-
-              // 6. Sign Up Prompt
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account? ",
-                    style: TextStyle(color: AppColors.textLight),
-                  ),
-                  GestureDetector(
-                    // 2. Link to Sign Up Screen
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
+              SignUpPrompt(
+                promptText: "Don't have an account? ",
+                actionText: 'Sign Up',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SignUpScreen(),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
             ],
           ),

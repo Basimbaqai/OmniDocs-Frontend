@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart'; // Corrected import
+import 'constants.dart';
 
 void main() {
   runApp(const OmniDocs());
@@ -13,10 +14,7 @@ class OmniDocs extends StatelessWidget {
     return MaterialApp(
       title: 'OmniDocs',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: const Color.fromARGB(255, 5, 70, 114),
-        useMaterial3: true,
-      ),
+      theme: ThemeData(primaryColor: AppColors.primary, useMaterial3: true),
       home: const LoginScreen(),
     );
   }
