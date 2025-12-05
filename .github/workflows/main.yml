@@ -3,7 +3,7 @@ name: Shorebird Patch
 on:
   push:
     branches:
-      - main  # Trigger on main branch pushes
+      - main  # Trigger on pushes to main branch
 
 env:
   SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
@@ -31,12 +31,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: ⚡ Patch Latest Release
+      - name: Add Shorebird Flutter to PATH
         run: |
-          # Ensure dependencies are installed
-          flutter pub get
+          # Use Shorebird's cached Flutter 3.38.3
+          echo "/home/runner/.config/shorebird/bin/cache/flutter/5d7eab0b8cc0146649c1c37cd1e1968c97d9e5dd/bin" >> $GITHUB_PATH
 
-          # Create a patch for the latest Android release
+      - name: Install Dart dependencies
+        run: flutter pub get
+
+      - name: ⚡ Patch Latest Android Release
+        run: |
           shorebird patch android \
             --release-version=latest \
             --no-confirm
