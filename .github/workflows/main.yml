@@ -10,14 +10,14 @@ env:
 
 jobs:
   patch:
+    runs-on: ubuntu-latest
+
     defaults:
       run:
         shell: bash
 
-    runs-on: ubuntu-latest
-
     steps:
-      - name: 📚 Git Checkout
+      - name: 📚 Checkout Repository
         uses: actions/checkout@v3
 
       - name: 🐦 Setup Shorebird
@@ -30,12 +30,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      
+
       - name: 🚀 Shorebird Patch
         uses: shorebirdtech/shorebird-patch@v1
         with:
           platform: android
           release-version: latest
           flutter-version: 3.38.3
-
-
